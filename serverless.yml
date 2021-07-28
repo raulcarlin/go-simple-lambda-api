@@ -1,0 +1,42 @@
+service: simple-service 
+
+provider:
+  name: aws
+  runtime: go1.x
+
+package:
+ patterns:
+   - '!**/**'
+   - 'bin/**'
+
+functions:
+  get:
+    handler: bin/simple-get-lambda
+    package:
+      include:
+        - ./bin/simpleg-get-lambda
+    events:
+      - http:
+          path: v1/simple/{param}
+          method: get
+          request:
+            parameter:
+              paths:
+                name: true
+  post:
+    handler: bin/simple-post-lambda
+    package:
+      include:
+        - ./bin/simple-post-lambda
+    events:
+      - http:
+          path: v1/simple
+          method: post
+
+plugins:
+  - serverless-localstack
+
+custom:
+  localstack:
+    stages:
+      - local
